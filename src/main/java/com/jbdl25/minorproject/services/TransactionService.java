@@ -21,7 +21,7 @@ public class TransactionService {
     TransactionRepository transactionRepository;
 
     @Transactional
-    public String issueBook(int bookId, int studentId) throws Exception {
+    public String issueBook(int bookId, String studentId) throws Exception {
         Book book = bookService.getBookById(bookId);
 
         if (book == null || !book.isAvailable())
@@ -62,43 +62,43 @@ public class TransactionService {
         return 0;
     }
 
-    @Transactional
-    public String returnBook(int bookId, int studentId) throws Exception {
-        Book book = bookService.getBookById(bookId);
-
-        if (book == null || book.isAvailable())
-            return "Book is not found or book is not issued to anyone";
-
-        Student student = studentService.getStudent(studentId);
-
-        if (student == null || book.getStudent().getId() != studentId)
-            return "Student not found or book is not issued to this student";
-
-        Transaction transaction = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .transactionStatus(TransactionStatus.PENDING)
-                .transactionType(TransactionType.RETURN)
-                .student(student)
-                .book(book)
-                .build();
-
-        try {
-            transactionRepository.save(transaction);
-            book.setAvailable(true);
-            book.setStudent(null);
-            bookService.addOrUpdateBook(book);
-
-            transaction.setTransactionStatus(TransactionStatus.SUCCESS);
-            transactionRepository.save(transaction);
-        }
-        catch (Exception exception) {
-            transaction.setTransactionStatus(TransactionStatus.FAILED);
-            transactionRepository.save(transaction);
-            book.setAvailable(false);
-            book.setStudent(student);
-            bookService.addOrUpdateBook(book);
-            throw new Exception("Transaction : " + transaction.getTransactionId() + " has failed.");
-        }
-        return transaction.getTransactionId();
-    }
+//    @Transactional
+//    public String returnBook(int bookId, int studentId) throws Exception {
+//        Book book = bookService.getBookById(bookId);
+//
+//        if (book == null || book.isAvailable())
+//            return "Book is not found or book is not issued to anyone";
+//
+//        Student student = studentService.getStudent(studentId);
+//
+//        if (student == null || book.getStudent().getId() != studentId)
+//            return "Student not found or book is not issued to this student";
+//
+//        Transaction transaction = Transaction.builder()
+//                .transactionId(UUID.randomUUID().toString())
+//                .transactionStatus(TransactionStatus.PENDING)
+//                .transactionType(TransactionType.RETURN)
+//                .student(student)
+//                .book(book)
+//                .build();
+//
+//        try {
+//            transactionRepository.save(transaction);
+//            book.setAvailable(true);
+//            book.setStudent(null);
+//            bookService.addOrUpdateBook(book);
+//
+//            transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+//            transactionRepository.save(transaction);
+//        }
+//        catch (Exception exception) {
+//            transaction.setTransactionStatus(TransactionStatus.FAILED);
+//            transactionRepository.save(transaction);
+//            book.setAvailable(false);
+//            book.setStudent(student);
+//            bookService.addOrUpdateBook(book);
+//            throw new Exception("Transaction : " + transaction.getTransactionId() + " has failed.");
+//        }
+//        return transaction.getTransactionId();
+//    }
 }

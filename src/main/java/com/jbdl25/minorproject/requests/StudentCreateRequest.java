@@ -13,6 +13,8 @@ public class StudentCreateRequest {
     private int age;
     private String country;
     private String contact;
+    private String email;
+    private String password;
 
     public Student toStudent() {
         return Student.builder()
@@ -20,6 +22,8 @@ public class StudentCreateRequest {
                 .age(age)
                 .contact(contact)
                 .country(country)
+                .email(email)
+                .password(password)
                 .build();
     }
 }
